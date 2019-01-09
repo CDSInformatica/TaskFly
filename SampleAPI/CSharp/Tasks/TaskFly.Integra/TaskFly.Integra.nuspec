@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>TaskFly.Integra</id>
+    <version>1.0.0.2</version>
+    <title>TaskFly API Integration</title>
+    <authors>Carlos dos Santos</authors>
+    <owners>CDS Informatica Ltda</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>TaskFly API Integration - www.gotaskfly.com</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2018 CDS Informatica Ltda.</copyright>
+    <tags>taskfly</tags>
+    <projectUrl>https://www.gotaskfly.com</projectUrl>
+    <iconUrl>https://www.gotaskfly.com/site/Content/img/logotask.png</iconUrl>
+  </metadata>
+  <files>
+    <file src="bin\Release\netstandard2.0\*.dll" target="lib\netstandard2.0" />
+  </files>
+</package>
