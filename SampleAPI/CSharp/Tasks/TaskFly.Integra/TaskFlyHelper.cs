@@ -12,8 +12,8 @@ namespace TaskFly.Integra
 {
     public class TaskFlyHelper
     {
-        private string apiURL = "https://integra.gotaskfly.com/api/v1";
-        private string apiToken;
+        const string apiURL = "https://integra.gotaskfly.com/api/v1";
+        private readonly string apiToken;
         public string Message = "";
 
         public TaskFlyHelper(string token)
