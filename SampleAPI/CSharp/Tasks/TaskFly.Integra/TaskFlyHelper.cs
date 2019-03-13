@@ -112,6 +112,7 @@ namespace TaskFly.Integra
 
         public List<Customers> GetCustomers() => CallService<List<Customers>>("/customers");
         public Customers GetCustomerByID(int id) => CallService<Customers>("/customers/" + id);
+        public int GetCustomerByEmailDomain(string emailDomain) => SendToService("POST",$"/customers/getbydomainname", new { domainname = emailDomain });
         public int AddCustomer(Customers customer) => SendToService("POST","/customers",customer);
         public void ChangeCustomer(Customers customer) => SendToService("PUT", $"/customers/{customer.Id}", customer);
         public void DeleteCustomer(int ID) => SendToService("DELETE", $"/customers/{ID}", null);

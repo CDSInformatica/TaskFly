@@ -21,7 +21,7 @@ namespace TaskFlySampleAPI
             // API Documentation: https://integra.gotaskfly.com/docs/index
             // Token is generated on TaskFly/User Profile/Integration
             // Each Team has an integration token
-            var APIToken = "";
+            var APIToken = "<YOUR_USER_PROFILE_TOKEN>";
             taskfly = new TaskFlyHelper(APIToken);
 
             UsersSample();
@@ -57,6 +57,9 @@ namespace TaskFlySampleAPI
             taskfly.ChangeCustomer(newCustomer);
             taskfly.DeleteCustomer(727);
             var customer1 = taskfly.GetCustomerByID(1);
+
+            var customerID = taskfly.GetCustomerByEmailDomain("cds-software.com.br");
+
         }
 
         private static void UsersSample()
