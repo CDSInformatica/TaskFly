@@ -2,12 +2,18 @@ version: 2.1.0.{build}
 
 configuration: Release
 
-after_build:
-  - ps: >-
-      . .\build.ps1 Pack-Nuget
+image: Visual Studio 2017
+branches:
+  only:
+  - master
+before_build:
+  - cmd: dotnet --version
+  - cmd: dotnet restore ./TaskFly.Integra/TaskFly.Integra.csproj --verbosity m
+build_script:
+  - cmd: dotnet publish -o ./TaskFly.Integra/publish
 
-artifacts:
-  - path: nuget
+  artifacts:
+  - path: ./TaskFly.Integra/publish
     name: src
 
 deploy:
