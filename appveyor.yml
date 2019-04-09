@@ -20,7 +20,7 @@ build_script:
   - cmd: dotnet publish ./SampleAPI/CSharp/Tasks/TaskFly.Integra/TaskFly.Integra.csproj -o ./publish/
   - cmd: nuget pack ./SampleAPI/CSharp/Tasks/TaskFly.Integra/TaskFly.Integra.nuspec -version %appveyor_build_version%
 artifacts:
-  - path: ./SampleAPI/CSharp/Tasks/TaskFly.Integra/*.nupkg
+  - path: /.*\.nupkg/
     name: publish
 
 deploy:
