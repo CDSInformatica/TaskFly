@@ -15,11 +15,11 @@ assembly_info:
   assembly_informational_version: '{version}'
 
 before_build:
-  - cmd: echo "$1.0.0.$env:appveyor_build_number"
+  - cmd: echo 1.0.0.%appveyor_build_number%
   - cmd: dotnet restore ./SampleAPI/CSharp/Tasks/TaskFly.Integra/TaskFly.Integra.csproj --verbosity m
 build_script:
   - cmd: dotnet publish ./SampleAPI/CSharp/Tasks/TaskFly.Integra/TaskFly.Integra.csproj -o ./SampleAPI/CSharp/Tasks/TaskFly.Integra/publish
-  - cmd: nuget pack ./SampleAPI/CSharp/Tasks/TaskFly.Integra/TaskFly.Integra.nuspec -Version="${version}"
+  - cmd: nuget pack ./SampleAPI/CSharp/Tasks/TaskFly.Integra/TaskFly.Integra.nuspec -Version=1.0.0.%appveyor_build_number%
 artifacts:
   - path: ./SampleAPI/CSharp/Tasks/TaskFly.Integra/*.nupkg
     name: publish
