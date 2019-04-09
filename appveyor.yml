@@ -12,7 +12,7 @@ before_build:
 build_script:
   - cmd: dotnet publish -o ./TaskFly.Integra/publish
 
-  artifacts:
+artifacts:
   - path: ./TaskFly.Integra/publish
     name: src
 
