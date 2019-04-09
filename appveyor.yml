@@ -10,7 +10,7 @@ before_build:
   - cmd: dotnet --version
   - cmd: dotnet restore ./SampleAPI/CSharp/Tasks/TaskFly.Integra/TaskFly.Integra.csproj --verbosity m
 build_script:
-  - cmd: dotnet publish -o ./SampleAPI/CSharp/Tasks/TaskFly.Integra/publish
+  - cmd: dotnet publish ./SampleAPI/CSharp/Tasks/TaskFly.Integra/TaskFly.Integra.csproj -o ./SampleAPI/CSharp/Tasks/TaskFly.Integra/publish
 
 artifacts:
   - path: ../SampleAPI/CSharp/Tasks/TaskFly.Integra/publish
