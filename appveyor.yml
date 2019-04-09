@@ -19,7 +19,7 @@ before_build:
   - cmd: dotnet restore ./SampleAPI/CSharp/Tasks/TaskFly.Integra/TaskFly.Integra.csproj --verbosity m
 build_script:
   - cmd: dotnet publish ./SampleAPI/CSharp/Tasks/TaskFly.Integra/TaskFly.Integra.csproj -o ./SampleAPI/CSharp/Tasks/TaskFly.Integra/publish
-
+  - cmd: dotnet pack ./SampleAPI/CSharp/Tasks/TaskFly.Integra/TaskFly.Integra.nuspec /p:Version=1.0.0.${env:APPVEYOR_BUILD_NUMBER}
 artifacts:
   - path: ./SampleAPI/CSharp/Tasks/TaskFly.Integra/*.nupkg
     name: publish
