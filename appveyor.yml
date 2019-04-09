@@ -8,12 +8,12 @@ branches:
   - master
 before_build:
   - cmd: dotnet --version
-  - cmd: dotnet restore ./src/TaskFly.Integra/TaskFly.Integra.csproj --verbosity m
+  - cmd: dotnet restore ./SampleAPI/CSharp/Tasks/TaskFly.Integra/TaskFly.Integra.csproj --verbosity m
 build_script:
-  - cmd: dotnet publish -o ./src/TaskFly.Integra/publish
+  - cmd: dotnet publish -o ./SampleAPI/CSharp/Tasks/TaskFly.Integra/publish
 
 artifacts:
-  - path: ./src/TaskFly.Integra/publish
+  - path: ../SampleAPI/CSharp/Tasks/TaskFly.Integra/publish
     name: src
 
 deploy:
