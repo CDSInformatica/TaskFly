@@ -15,7 +15,7 @@ assembly_info:
   assembly_informational_version: '{version}'
 
 before_build:
-  - cmd: echo "${version}"
+  - cmd: echo "$1.0.0.$env:appveyor_build_number"
   - cmd: dotnet restore ./SampleAPI/CSharp/Tasks/TaskFly.Integra/TaskFly.Integra.csproj --verbosity m
 build_script:
   - cmd: dotnet publish ./SampleAPI/CSharp/Tasks/TaskFly.Integra/TaskFly.Integra.csproj -o ./SampleAPI/CSharp/Tasks/TaskFly.Integra/publish
