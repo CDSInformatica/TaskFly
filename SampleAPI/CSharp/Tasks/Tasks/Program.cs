@@ -60,6 +60,8 @@ namespace TaskFlySampleAPI
 
             var customerID = taskfly.GetCustomerByEmailDomain("cds-software.com.br");
 
+            var customerIDDoc = taskfly.GetCustomerByDocument("SOME_DOC_ID");
+
         }
 
         private static void UsersSample()
