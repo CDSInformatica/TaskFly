@@ -1,0 +1,29 @@
+version: 2.1.0.{build}
+
+configuration: Release
+
+after_build:
+  - ps: >-
+      . .\build.ps1 Pack-Nuget
+
+artifacts:
+  - path: nuget
+    name: src
+
+deploy:
+- provider: NuGet
+  api_key:
+    secure: 7dmlOrRS5rDSxgwuxJCrtPXY4kaxX+6N95JtvAdyvjCeoUXXt20i4nmuKIcAS2jd
+  skip_symbols: true
+  on:
+    branch: master
+    
+notifications:
+- provider: Email
+  to:
+  - cds@cds-software.com.br
+  subject: TaskFly.Integra  Build
+  on_build_success: false
+  on_build_failure: true
+  on_build_status_changed: true
+  
