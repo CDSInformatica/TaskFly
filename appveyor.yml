@@ -6,6 +6,14 @@ image: Visual Studio 2017
 branches:
   only:
   - master
+
+assembly_info:  
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
+
 before_build:
   - cmd: dotnet --version
   - cmd: dotnet restore ./SampleAPI/CSharp/Tasks/TaskFly.Integra/TaskFly.Integra.csproj --verbosity m
@@ -13,7 +21,7 @@ build_script:
   - cmd: dotnet publish ./SampleAPI/CSharp/Tasks/TaskFly.Integra/TaskFly.Integra.csproj -o ./SampleAPI/CSharp/Tasks/TaskFly.Integra/publish
 
 artifacts:
-  - path: ./SampleAPI/CSharp/Tasks/TaskFly.Integra
+  - path: ./SampleAPI/CSharp/Tasks/TaskFly.Integra/*.nupkg
     name: publish
 
 deploy:
