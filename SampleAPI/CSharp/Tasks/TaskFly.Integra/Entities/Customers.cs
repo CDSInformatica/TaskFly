@@ -21,5 +21,7 @@ namespace TaskFly.Entities
         public string ServiceDeskLogin { get; set; }
         public string ServiceDeskPassword { get; set; }
         public bool Active { get; set; }
+        public int ContractedHours { get; set; }
+        public string Document { get; set; }
     }
 }
