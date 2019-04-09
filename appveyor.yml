@@ -13,8 +13,8 @@ build_script:
   - cmd: dotnet publish ./SampleAPI/CSharp/Tasks/TaskFly.Integra/TaskFly.Integra.csproj -o ./SampleAPI/CSharp/Tasks/TaskFly.Integra/publish
 
 artifacts:
-  - path: ../SampleAPI/CSharp/Tasks/TaskFly.Integra/publish
-    name: src
+  - path: ./SampleAPI/CSharp/Tasks/TaskFly.Integra/publish
+    name: dll
 
 deploy:
 - provider: NuGet
