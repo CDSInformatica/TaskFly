@@ -78,6 +78,10 @@ namespace TaskFly.Integra
                         }
                 }
                 responsebody = response.Result;
+                if(responsebody.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    Message = responsebody.StatusCode.ToString();
+                }
                 string result = (responsebody.Content.ReadAsStringAsync().Result);
                 if (result == "")
                 {

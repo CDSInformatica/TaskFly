@@ -33,6 +33,11 @@ namespace TaskFlySampleAPI
             TaskTypeSample();
             TaskSample();
         }
+        private static void UsersSample()
+        {
+            var users = taskfly.GetUsers();
+            var userTask = taskfly.GetUsersTaskCount();
+        }
 
         private static void CustomersSample()
         {
@@ -61,12 +66,6 @@ namespace TaskFlySampleAPI
             var customerID = taskfly.GetCustomerByEmailDomain("cds-software.com.br");
 
             var customerIDDoc = taskfly.GetCustomerByDocument("SOME_DOC_ID");
-
-        }
-
-        private static void UsersSample()
-        {
-            var users = taskfly.GetUsers();
         }
 
         private static void ProjectsSample()
