@@ -55,7 +55,7 @@ namespace TaskFlySampleAPI
             newCustomer.Active = true;
             newCustomer.Name = "Customer Sample Changed";
             taskfly.ChangeCustomer(newCustomer);
-            taskfly.DeleteCustomer(727);
+            taskfly.DeleteCustomer(newCustomer.Id);
             var customer1 = taskfly.GetCustomerByID(1);
 
             var customerID = taskfly.GetCustomerByEmailDomain("cds-software.com.br");
@@ -163,6 +163,7 @@ namespace TaskFlySampleAPI
 
             #region Task Timer
             taskfly.TaskStartTimer(newID);
+            Task.Delay(2000);
             taskfly.TaskStopTimer(newID);
             #endregion
 
@@ -201,7 +202,12 @@ namespace TaskFlySampleAPI
                 Name = fileName,
                 ByteArrayFile = bytearray
             };
+
             taskfly.SendTaskAttachmment(newID, attachment);
+            #endregion
+
+            #region Tasks by Tag
+            var userTasks = taskfly.GetTasksByTag("<YOUR_TAG>");
             #endregion
         }
     }
