@@ -35,5 +35,8 @@ namespace TaskFly.Entities
         public bool TimeTrackerOn { get; set; }
         public DateTime? CompletedData { get; set; }
         public DateTime CreatedDate { get; set; }
+        public string TimePerformed { get; set; }
+        public string TAG { get; set; }
+        public int TotalComments { get; set; }
     }
 }
