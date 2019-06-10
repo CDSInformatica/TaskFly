@@ -23,5 +23,6 @@ namespace TaskFly.Entities
         public bool Active { get; set; }
         public int? ContractedHours { get; set; }
         public string Document { get; set; }
+        public int? ServiceDeskUserId { get; set; }
     }
 }

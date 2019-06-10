@@ -38,24 +38,24 @@ namespace TaskFlySampleAPI
         {
             var customers = taskfly.GetCustomers();
 
-            var newCustomer = new Customers()
-            {
-                CompanyName = "Customers Sample",
-                Name = "Customers Sample Name",
-                Address = "Av. Alberto Carazzai, 762",
-                City = "Cornelio Procopio",
-                District = "Vila Ipiranga",
-                UF = "PR",
-                Contact = "Carlos dos Santos",
-                Email = "cds@cds-software.com.br",
-                Active = true
-            };
-            int newCustomerId = taskfly.AddCustomer(newCustomer);
-            newCustomer.Id = newCustomerId;
-            newCustomer.Active = true;
-            newCustomer.Name = "Customer Sample Changed";
-            taskfly.ChangeCustomer(newCustomer);
-            taskfly.DeleteCustomer(727);
+            //var newCustomer = new Customers()
+            //{
+            //    CompanyName = "Customers Sample",
+            //    Name = "Customers Sample Name",
+            //    Address = "Av. Alberto Carazzai, 762",
+            //    City = "Cornelio Procopio",
+            //    District = "Vila Ipiranga",
+            //    UF = "PR",
+            //    Contact = "Carlos dos Santos",
+            //    Email = "cds@cds-software.com.br",
+            //    Active = true
+            //};
+            //int newCustomerId = taskfly.AddCustomer(newCustomer);
+            //newCustomer.Id = newCustomerId;
+            //newCustomer.Active = true;
+            //newCustomer.Name = "Customer Sample Changed";
+            //taskfly.ChangeCustomer(newCustomer);
+            //taskfly.DeleteCustomer(727);
             var customer1 = taskfly.GetCustomerByID(1);
 
             var customerID = taskfly.GetCustomerByEmailDomain("cds-software.com.br");
