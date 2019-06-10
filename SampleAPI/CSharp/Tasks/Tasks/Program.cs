@@ -33,40 +33,38 @@ namespace TaskFlySampleAPI
             TaskTypeSample();
             TaskSample();
         }
+        private static void UsersSample()
+        {
+            var users = taskfly.GetUsers();
+            var userTask = taskfly.GetUsersTaskCount();
+        }
 
         private static void CustomersSample()
         {
             var customers = taskfly.GetCustomers();
-
-            //var newCustomer = new Customers()
-            //{
-            //    CompanyName = "Customers Sample",
-            //    Name = "Customers Sample Name",
-            //    Address = "Av. Alberto Carazzai, 762",
-            //    City = "Cornelio Procopio",
-            //    District = "Vila Ipiranga",
-            //    UF = "PR",
-            //    Contact = "Carlos dos Santos",
-            //    Email = "cds@cds-software.com.br",
-            //    Active = true
-            //};
-            //int newCustomerId = taskfly.AddCustomer(newCustomer);
-            //newCustomer.Id = newCustomerId;
-            //newCustomer.Active = true;
-            //newCustomer.Name = "Customer Sample Changed";
-            //taskfly.ChangeCustomer(newCustomer);
-            //taskfly.DeleteCustomer(727);
+            var newCustomer = new Customers()
+            {
+                CompanyName = "Customers Sample",
+                Name = "Customers Sample Name",
+                Address = "Av. Alberto Carazzai, 762",
+                City = "Cornelio Procopio",
+                District = "Vila Ipiranga",
+                UF = "PR",
+                Contact = "Carlos dos Santos",
+                Email = "cds@cds-software.com.br",
+                Active = true
+            };
+            int newCustomerId = taskfly.AddCustomer(newCustomer);
+            newCustomer.Id = newCustomerId;
+            newCustomer.Active = true;
+            newCustomer.Name = "Customer Sample Changed";
+            taskfly.ChangeCustomer(newCustomer);
+            taskfly.DeleteCustomer(newCustomer.Id);
             var customer1 = taskfly.GetCustomerByID(1);
 
             var customerID = taskfly.GetCustomerByEmailDomain("cds-software.com.br");
 
             var customerIDDoc = taskfly.GetCustomerByDocument("SOME_DOC_ID");
-
-        }
-
-        private static void UsersSample()
-        {
-            var users = taskfly.GetUsers();
         }
 
         private static void ProjectsSample()
@@ -163,6 +161,7 @@ namespace TaskFlySampleAPI
 
             #region Task Timer
             taskfly.TaskStartTimer(newID);
+            Task.Delay(2000);
             taskfly.TaskStopTimer(newID);
             #endregion
 
@@ -201,7 +200,12 @@ namespace TaskFlySampleAPI
                 Name = fileName,
                 ByteArrayFile = bytearray
             };
+
             taskfly.SendTaskAttachmment(newID, attachment);
+            #endregion
+
+            #region Tasks by Tag
+            var userTasks = taskfly.GetTasksByTag("<YOUR_TAG>");
             #endregion
         }
     }
