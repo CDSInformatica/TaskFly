@@ -38,5 +38,10 @@ namespace TaskFly.Entities
         public string TimePerformed { get; set; }
         public string TAG { get; set; }
         public int TotalComments { get; set; }
+        public List<TaskAddCustomFields> CustomFields { get; set; }
+        public Tasks()
+        {
+            CustomFields = new List<TaskAddCustomFields>();
+        }
     }
 }

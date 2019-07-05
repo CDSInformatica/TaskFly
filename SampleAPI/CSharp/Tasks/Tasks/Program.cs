@@ -139,6 +139,10 @@ namespace TaskFlySampleAPI
 
         private static void TaskSample()
         {
+            #region Get Task Custom Fields
+            var customFields = taskfly.GetTaskCustomFields();
+            #endregion
+
             #region Create Task
             var phase = taskfly.GetTaskPhases().First();
             var priority = taskfly.GetTaskPriority().First();
@@ -156,6 +160,45 @@ namespace TaskFlySampleAPI
                 CustomerId = customer.Id,
                 ProjectId = project.Id
             };
+
+            // You need to check Custom Fields - maybe you have required fields
+            if (customFields.Count() > 0)
+            {
+                foreach (var f in customFields)
+                {
+                    var newField = new TaskAddCustomFields();
+                    newField.CustomFieldId = f.Id;
+                    switch (f.Type)
+                    {
+                        case "text":
+                            {
+                                newField.Value = "Text Sample Value";
+                                break;
+                            }
+                        case "int":
+                            {
+                                newField.Value = "0";
+                                break;
+                            }
+                        case "decimal":
+                            {
+                                newField.Value = "1.23";
+                                break;
+                            }
+                        case "date":
+                            {
+                                newField.Value = DateTime.Today.ToShortDateString();
+                                break;
+                            }
+                        case "bool":
+                            {
+                                newField.Value = "true";
+                                break;
+                            }
+                    }
+                    newTask.CustomFields.Add(newField);
+                }
+            }
             int newID = taskfly.AddTask(newTask);
             #endregion
 

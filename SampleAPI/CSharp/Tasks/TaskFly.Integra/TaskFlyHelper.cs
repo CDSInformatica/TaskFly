@@ -151,6 +151,7 @@ namespace TaskFly.Integra
         public void DeleteTaskType(int ID) => CallService<object>("DELETE", $"/tasktypes/{ID}", null);
         public List<Users> GetUsers() => CallService<List<Users>>("GET", "/users");
         public List<UsersToTransferTask> GetUsersToTransferTask() => CallService<List<UsersToTransferTask>>("GET", "/tasks/transfer/users");
+        public List<TaskGetCustomFields> GetTaskCustomFields() => CallService<List<TaskGetCustomFields>>("GET", "/tasks/customfields");
         public List<Tasks> GetTasks(Dictionary<string, object> filter)
         {
             var sb = new StringBuilder("?");
