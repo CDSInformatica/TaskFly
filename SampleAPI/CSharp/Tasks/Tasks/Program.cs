@@ -21,9 +21,7 @@ namespace TaskFlySampleAPI
             // API Documentation: https://integra.gotaskfly.com/docs/index
             // Token is generated on TaskFly/User Profile/Integration
             // Each Team has an integration token
-            var APIToken = "<YOUR_USER_PROFILE_TOKEN>";
-            //APIToken = "254d5a8a1f58a124c6e887e896dee7b9ff7";
-            APIToken = "12d7f72164750a4d3bbbf2a4cb856fc482";
+            var APIToken = "<YOUR_USER_PROFILE_TOKEN>";         
             taskfly = new TaskFlyHelper(APIToken);
 
             //BoardsSample();
