@@ -15,33 +15,42 @@ namespace TaskFlySampleAPI
     {
         private static TaskFlyHelper taskfly;
 
-        static void Main(string[] args)
+        private static async Task Main()
         {
             // API V1 url: https://integra.gotaskfly.com/api/v1
             // API Documentation: https://integra.gotaskfly.com/docs/index
             // Token is generated on TaskFly/User Profile/Integration
             // Each Team has an integration token
             var APIToken = "<YOUR_USER_PROFILE_TOKEN>";
+            //APIToken = "254d5a8a1f58a124c6e887e896dee7b9ff7";
+            APIToken = "12d7f72164750a4d3bbbf2a4cb856fc482";
             taskfly = new TaskFlyHelper(APIToken);
 
-            UsersSample();
-            CustomersSample();
-            ProjectsSample();
-            SectorsSample();
-            PhasesSample();
-            PrioritySample();
-            TaskTypeSample();
-            TaskSample();
-        }
-        private static void UsersSample()
-        {
-            var users = taskfly.GetUsers();
-            var userTask = taskfly.GetUsersTaskCount();
+            //BoardsSample();
+            //UsersSample();
+            //CustomersSample();
+            //ProjectsSample();
+            //SectorsSample();
+            //PhasesSample();
+            //PrioritySample();
+            //TaskTypeSample();
+            await TaskSample();
         }
 
-        private static void CustomersSample()
+        private static async Task BoardsSample()
         {
-            var customers = taskfly.GetCustomers();
+            var boards = await taskfly.GetBoards();
+        }
+
+        private static async Task UsersSample()
+        {
+            var users = await taskfly.GetUsers();
+            var userTask = await taskfly.GetUsersTaskCount();
+        }
+
+        private static async Task CustomersSample()
+        {
+            var customers = await taskfly.GetCustomers();
             var newCustomer = new Customers()
             {
                 CompanyName = "Customers Sample",
@@ -54,101 +63,103 @@ namespace TaskFlySampleAPI
                 Email = "cds@cds-software.com.br",
                 Active = true
             };
-            int newCustomerId = taskfly.AddCustomer(newCustomer);
+            int newCustomerId = await taskfly.AddCustomer(newCustomer);
             newCustomer.Id = newCustomerId;
             newCustomer.Active = true;
             newCustomer.Name = "Customer Sample Changed";
-            taskfly.ChangeCustomer(newCustomer);
-            taskfly.DeleteCustomer(newCustomer.Id);
-            var customer1 = taskfly.GetCustomerByID(1);
+            await taskfly.ChangeCustomer(newCustomer);
+            await taskfly.DeleteCustomer(newCustomer.Id);
+            var customer1 = await taskfly.GetCustomerByID(1);
 
-            var customerID = taskfly.GetCustomerByEmailDomain("cds-software.com.br");
+            var customerID = await taskfly.GetCustomerByEmailDomain("cds-software.com.br");
 
-            var customerIDDoc = taskfly.GetCustomerByDocument("SOME_DOC_ID");
+            var customerIDDoc = await taskfly.GetCustomerByDocument("SOME_DOC_ID");
         }
 
-        private static void ProjectsSample()
+        private static async Task ProjectsSample()
         {
-            var projects = taskfly.GetProjects();
+            var projects = await taskfly.GetProjects();
             var newPrj = new Projects()
             {
                 Description = "Project Inserted"
             };
-            int newId = taskfly.AddProject(newPrj);
+            int newId = await taskfly.AddProject(newPrj);
             newPrj.Id = newId;
             newPrj.Description = "Project Changed";
-            taskfly.ChangeProject(newPrj);
-            taskfly.DeleteProject(newId);
+            await taskfly.ChangeProject(newPrj);
+            await taskfly.DeleteProject(newId);
         }
 
-        private static void SectorsSample()
+        private static async Task SectorsSample()
         {
-            var sectors = taskfly.GetSectors();
+            var sectors = await taskfly.GetSectors();
             var newSector = new Sectors()
             {
                 Description = "Sector Inserted"
             };
-            int newId = taskfly.AddSector(newSector);
+            int newId = await taskfly.AddSector(newSector);
             newSector.Id = newId;
             newSector.Description = "Sector Changed";
-            taskfly.ChangeSector(newSector);
-            taskfly.DeleteSector(newId);
+            await taskfly.ChangeSector(newSector);
+            await taskfly.DeleteSector(newId);
         }
 
-        private static void PhasesSample()
+        private static async Task PhasesSample()
         {
-            var phases = taskfly.GetTaskPhases();
+            var boards = await taskfly.GetBoards();
+            var phases = await taskfly.GetTaskPhases(boards.First().Id);
             var newPhase = new TaskPhases()
             {
                 Description = "Phase Inserted"
             };
-            int newId = taskfly.AddPhase(newPhase);
+            int newId = await taskfly.AddPhase(newPhase);
             newPhase.Id = newId;
             newPhase.Description = "Phase Changed";
-            taskfly.ChangePhase(newPhase);
-            taskfly.DeletePhase(newId);
+            await taskfly.ChangePhase(newPhase);
+            await taskfly.DeletePhase(newId);
         }
 
-        private static void PrioritySample()
+        private static async Task PrioritySample()
         {
-            var priority = taskfly.GetTaskPriority();
+            var priority = await taskfly.GetTaskPriority();
             var newPriority = new TaskPriority()
             {
                 Description = "Priority Inserted"
             };
-            int newId = taskfly.AddPriority(newPriority);
+            int newId = await taskfly.AddPriority(newPriority);
             newPriority.Id = newId;
             newPriority.Description = "Priority Changed";
-            taskfly.ChangePriority(newPriority);
-            taskfly.DeletePriority(newId);
+            await taskfly.ChangePriority(newPriority);
+            await taskfly.DeletePriority(newId);
         }
 
-        private static void TaskTypeSample()
+        private static async Task TaskTypeSample()
         {
-            var type = taskfly.GetTaskType();
+            var type = await taskfly.GetTaskType();
             var newType = new TaskType()
             {
                 Description = "Type Inserted"
             };
-            int newId = taskfly.AddTaskType(newType);
+            int newId = await taskfly.AddTaskType(newType);
             newType.Id = newId;
             newType.Description = "Type Changed";
-            taskfly.ChangeTaskType(newType);
-            taskfly.DeleteTaskType(newId);
+            await taskfly.ChangeTaskType(newType);
+            await taskfly.DeleteTaskType(newId);
         }
 
-        private static void TaskSample()
+        private static async Task TaskSample()
         {
             #region Get Task Custom Fields
-            var customFields = taskfly.GetTaskCustomFields();
+            var customFields = await taskfly.GetTaskCustomFields();
             #endregion
 
             #region Create Task
-            var phase = taskfly.GetTaskPhases().First();
-            var priority = taskfly.GetTaskPriority().First();
-            var taskType = taskfly.GetTaskType().First();
-            var customer = taskfly.GetCustomers().First();
-            var project = taskfly.GetProjects().First();
+            var board = (await taskfly.GetBoards()).First();
+            var phase = (await taskfly.GetTaskPhases(board.Id)).First();
+            var priority = (await taskfly.GetTaskPriority()).First();
+            var taskType = (await taskfly.GetTaskType()).First();
+            var customer = (await taskfly.GetCustomers()).First();
+            var project = (await taskfly.GetProjects()).First();
 
             var newTask = new Tasks
             {
@@ -158,7 +169,8 @@ namespace TaskFlySampleAPI
                 PriorityId = priority.Id,
                 TypeId = taskType.Id,
                 CustomerId = customer.Id,
-                ProjectId = project.Id
+                ProjectId = project.Id,
+                BoardId = board.Id
             };
 
             // You need to check Custom Fields - maybe you have required fields
@@ -195,17 +207,19 @@ namespace TaskFlySampleAPI
                                 newField.Value = "true";
                                 break;
                             }
+                        default:
+                            break;
                     }
                     newTask.CustomFields.Add(newField);
                 }
             }
-            int newID = taskfly.AddTask(newTask);
+            int newID = await taskfly.AddTask(newTask);
             #endregion
 
             #region Task Timer
-            taskfly.TaskStartTimer(newID);
-            Task.Delay(2000);
-            taskfly.TaskStopTimer(newID);
+            await taskfly.TaskStartTimer(newID);
+            await Task.Delay(2000);
+            await taskfly.TaskStopTimer(newID);
             #endregion
 
             #region Task Find
@@ -217,8 +231,8 @@ namespace TaskFlySampleAPI
             #endregion
 
             #region Transfer Task to Another User
-            var userTransfer = taskfly.GetUsersToTransferTask();
-            taskfly.TransferTask(newID, userTransfer.First().UserId);
+            var userTransfer = await taskfly.GetUsersToTransferTask();
+            await taskfly.TransferTask(newID, userTransfer.First().UserId);
             #endregion
 
             #region Task Comments
@@ -229,22 +243,25 @@ namespace TaskFlySampleAPI
                 SendToUserId = null,
                 Description = "Commented using API"
             };
-            taskfly.SendTaskComments(newID, comment);
+            await taskfly.SendTaskComments(newID, comment);
             #endregion
 
             #region Task Attachments
             var fileName = "TaskFlyImage.png";
-            var fs = new FileStream(fileName, FileMode.Open);
-            byte[] bytearray = new byte[fs.Length];
-            fs.Read(bytearray, 0, (int)fs.Length);
-
-            var attachment = new TaskAttachment
+            using (var fs = new FileStream(fileName, FileMode.Open))
             {
-                Name = fileName,
-                ByteArrayFile = bytearray
-            };
 
-            taskfly.SendTaskAttachmment(newID, attachment);
+                byte[] bytearray = new byte[fs.Length];
+                fs.Read(bytearray, 0, (int)fs.Length);
+
+                var attachment = new TaskAttachment
+                {
+                    Name = fileName,
+                    ByteArrayFile = bytearray
+                };
+
+                await taskfly.SendTaskAttachmment(newID, attachment);
+            }
             #endregion
 
             #region Tasks by Tag

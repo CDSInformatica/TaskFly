@@ -13,146 +13,146 @@ namespace TaskFly.Integra
     public class TaskFlyHelper
     {
         const string apiURL = "https://integra.gotaskfly.com/api/v1";
-        private readonly string apiToken;
         public string Message = "";
+        private HttpClient client;
 
         public TaskFlyHelper(string token)
         {
-            apiToken = token;
-        }
-
-        private HttpClient GetHttpClientToken()
-        {
-            HttpClient client = new HttpClient();
+            client = new HttpClient();
             client.DefaultRequestHeaders.Accept.Add(
                     new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Add("api_key", apiToken);
-            return client;
+            client.DefaultRequestHeaders.Add("api_key", token);
         }
 
-        private T CallService<T>(string httpVerb, string urlMethod, object data = null)
+        private async Task<T> CallService<T>(string httpVerb, string urlMethod, object data = null)
         {
             Message = "";
-            using (var client = GetHttpClientToken())
+            HttpResponseMessage responsebody;
+            var url = apiURL + urlMethod;
+            HttpResponseMessage response = null;
+            HttpContent httpContent;
+            if (data != null)
             {
-                HttpResponseMessage responsebody;
-                var url = apiURL + urlMethod;
-                Task<HttpResponseMessage> response = null;
-                HttpContent httpContent;
-                if (data != null)
-                {
-                    var content = JsonConvert.SerializeObject(data);
-                    var buffer = Encoding.UTF8.GetBytes(content);
-                    var byteContent = new ByteArrayContent(buffer);
-                    byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                    httpContent = byteContent;
-                }
-                else
-                {
-                    var content = new StringContent("");
-                    content.Headers.ContentType = null;
-                    httpContent = content;
-                }
+                var content = JsonConvert.SerializeObject(data);
+                var buffer = Encoding.UTF8.GetBytes(content);
+                var byteContent = new ByteArrayContent(buffer);
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                httpContent = byteContent;
+            }
+            else
+            {
+                var content = new StringContent("");
+                content.Headers.ContentType = null;
+                httpContent = content;
+            }
 
-                switch (httpVerb)
+            switch (httpVerb)
+            {
+                case "GET":
+                    {
+                        response = await client.GetAsync(url);
+                        break;
+                    }
+                case "POST":
+                    {
+                        response = await client.PostAsync(url, httpContent);
+                        break;
+                    }
+                case "PUT":
+                    {
+                        response = await client.PutAsync(url, httpContent);
+                        break;
+                    }
+                case "DELETE":
+                    {
+                        response = await client.DeleteAsync(url);
+                        break;
+                    }
+                default:
+                    {
+                        response = null;
+                        break;
+                    }
+            }
+            responsebody = response;
+            if(responsebody.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                Message = responsebody.StatusCode.ToString();
+            }
+            var result = await responsebody.Content.ReadAsStringAsync();
+            if (result == "")
+            {
+                Message = responsebody.StatusCode.ToString();
+            }
+            if (result.Contains(nameof(Message)))
+            {
+                var newType = new { Message = "" };
+                var obj = JsonConvert.DeserializeAnonymousType(result, newType);
+                Message = obj.Message;
+            }
+            if (httpVerb == "GET")
+            {
+                return JsonConvert.DeserializeObject<T>(result);
+            }
+            else
+            {
+                var newType = new { ID = 0 };
+                if (httpVerb == "POST" && result != "")
                 {
-                    case "GET":
-                        {
-                            response = client.GetAsync(url);
-                            break;
-                        }
-                    case "POST":
-                        {
-                            response = client.PostAsync(url, httpContent);
-                            break;
-                        }
-                    case "PUT":
-                        {
-                            response = client.PutAsync(url, httpContent);
-                            break;
-                        }
-                    case "DELETE":
-                        {
-                            response = client.DeleteAsync(url);
-                            break;
-                        }
-                }
-                responsebody = response.Result;
-                if(responsebody.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    Message = responsebody.StatusCode.ToString();
-                }
-                string result = (responsebody.Content.ReadAsStringAsync().Result);
-                if (result == "")
-                {
-                    Message = responsebody.StatusCode.ToString();
-                }
-                if (result.Contains("Message"))
-                {
-                    var newType = new { Message = "" };
-                    var obj = JsonConvert.DeserializeAnonymousType(result, newType);
-                    Message = obj.Message;
-                }
-                if (httpVerb == "GET")
-                {
-                    return JsonConvert.DeserializeObject<T>(result);
+                    try
+                    {
+                        var obj = JsonConvert.DeserializeAnonymousType(result, newType);
+                        if (Message == "") Message = "OK";
+                        return JsonConvert.DeserializeObject<T>(obj.ID.ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        Message = ex.Message;
+                        return JsonConvert.DeserializeObject<T>(newType.ID.ToString());
+                    }
                 }
                 else
                 {
-                    if (httpVerb == "POST" && result != "")
-                    {
-                        try
-                        {
-                            var newType = new { ID = 0 };
-                            var obj = JsonConvert.DeserializeAnonymousType(result, newType);
-                            if (Message == "") Message = "OK";
-                            return JsonConvert.DeserializeObject<T>(obj.ID.ToString());
-                        }
-                        catch (Exception ex)
-                        {
-                            Message = ex.Message;
-                            return JsonConvert.DeserializeObject<T>("0");
-                        }
-                    }
-                    else
-                    {
-                        return JsonConvert.DeserializeObject<T>("0");
-                    }
+                    return JsonConvert.DeserializeObject<T>(newType.ID.ToString());
                 }
             }
         }
 
-        public List<Customers> GetCustomers() => CallService<List<Customers>>("GET", "/customers");
-        public Customers GetCustomerByID(int id) => CallService<Customers>("GET", "/customers/" + id);
-        public int GetCustomerByEmailDomain(string emailDomain) => CallService<int>("POST", $"/customers/getbydomainname", new { domainname = emailDomain });
-        public int GetCustomerByDocument(string customerDocument) => CallService<int>("POST", $"/customers/getbydocument", new { document = customerDocument });
-        public int AddCustomer(Customers customer) => CallService<int>("POST","/customers",customer);
-        public void ChangeCustomer(Customers customer) => CallService<object>("PUT", $"/customers/{customer.Id}", customer);
-        public void DeleteCustomer(int ID) => CallService<object>("DELETE", $"/customers/{ID}", null);
-        public List<Projects> GetProjects() => CallService<List<Projects>>("GET", "/projects");
-        public int AddProject(Projects project) => CallService<int>("POST", "/projects", project);
-        public void ChangeProject(Projects project) => CallService<object>("PUT", $"/projects/{project.Id}", project);
-        public void DeleteProject(int ID) => CallService<object>("DELETE", $"/projects/{ID}", null);
-        public List<Sectors> GetSectors() => CallService<List<Sectors>>("GET", "/sectors");
-        public int AddSector(Sectors sector) => CallService<int>("POST", "/sectors", sector);
-        public void ChangeSector(Sectors sector) => CallService<object>("PUT", $"/sectors/{sector.Id}", sector);
-        public void DeleteSector(int ID) => CallService<object>("DELETE", $"/sectors/{ID}", null);
-        public List<TaskPhases> GetTaskPhases() => CallService<List<TaskPhases>>("GET", "/taskphases");
-        public int AddPhase(TaskPhases taskPhase) => CallService<int>("POST", "/taskphases", taskPhase);
-        public void ChangePhase(TaskPhases taskPhase) => CallService<object>("PUT", $"/taskphases/{taskPhase.Id}", taskPhase);
-        public void DeletePhase(int ID) => CallService<object>("DELETE", $"/taskphases/{ID}", null);
-        public List<TaskPriority> GetTaskPriority() => CallService<List<TaskPriority>>("GET", "/taskpriorities");
-        public int AddPriority(TaskPriority taskPriority) => CallService<int>("POST", "/taskpriorities", taskPriority);
-        public void ChangePriority(TaskPriority taskPriority) => CallService<object>("PUT", $"/taskpriorities/{taskPriority.Id}", taskPriority);
-        public void DeletePriority(int ID) => CallService<object>("DELETE", $"/taskpriorities/{ID}", null);
-        public List<TaskType> GetTaskType() => CallService<List<TaskType>>("GET", "/tasktypes");
-        public int AddTaskType(TaskType taskType) => CallService<int>("POST", "/tasktypes", taskType);
-        public void ChangeTaskType(TaskType taskType) => CallService<object>("PUT", $"/tasktypes/{taskType.Id}", taskType);
-        public void DeleteTaskType(int ID) => CallService<object>("DELETE", $"/tasktypes/{ID}", null);
-        public List<Users> GetUsers() => CallService<List<Users>>("GET", "/users");
-        public List<UsersToTransferTask> GetUsersToTransferTask() => CallService<List<UsersToTransferTask>>("GET", "/tasks/transfer/users");
-        public List<TaskGetCustomFields> GetTaskCustomFields() => CallService<List<TaskGetCustomFields>>("GET", "/tasks/customfields");
-        public List<Tasks> GetTasks(Dictionary<string, object> filter)
+        public async Task<List<Boards>> GetBoards() => await CallService<List<Boards>>("GET", "/boards");
+        public async Task<Boards> GetBoardsByID(int id) => await CallService<Boards>("GET", "/boards/" + id);
+        public async Task<int> AddBoards(Boards board) => await CallService<int>("POST", "/boards", board);
+        public async Task ChangeBoards(Boards board) => await CallService<object>("PUT", $"/boards/{board.Id}", board);
+        public async Task<List<Customers>> GetCustomers() => await CallService<List<Customers>>("GET", "/customers");
+        public async Task<Customers> GetCustomerByID(int id) => await CallService<Customers>("GET", "/customers/" + id);
+        public async Task<int> GetCustomerByEmailDomain(string emailDomain) => await CallService<int>("POST", $"/customers/getbydomainname", new { domainname = emailDomain });
+        public async Task<int> GetCustomerByDocument(string customerDocument) => await CallService<int>("POST", $"/customers/getbydocument", new { document = customerDocument });
+        public async Task<int> AddCustomer(Customers customer) => await CallService<int>("POST","/customers",customer);
+        public async Task ChangeCustomer(Customers customer) => await CallService<object>("PUT", $"/customers/{customer.Id}", customer);
+        public async Task DeleteCustomer(int ID) => await CallService<object>("DELETE", $"/customers/{ID}", null);
+        public async Task<List<Projects>> GetProjects() => await CallService<List<Projects>>("GET", "/projects");
+        public async Task<int> AddProject(Projects project) => await CallService<int>("POST", "/projects", project);
+        public async Task ChangeProject(Projects project) => await CallService<object>("PUT", $"/projects/{project.Id}", project);
+        public async Task DeleteProject(int ID) => await CallService<object>("DELETE", $"/projects/{ID}", null);
+        public async Task<List<Sectors>> GetSectors() => await CallService<List<Sectors>>("GET", "/sectors");
+        public async Task<int> AddSector(Sectors sector) => await CallService<int>("POST", "/sectors", sector);
+        public async Task ChangeSector(Sectors sector) => await CallService<object>("PUT", $"/sectors/{sector.Id}", sector);
+        public async Task DeleteSector(int ID) => await CallService<object>("DELETE", $"/sectors/{ID}", null);
+        public async Task<List<TaskPhases>> GetTaskPhases(int boardId) => await CallService<List<TaskPhases>>("GET", $"/taskphases/all/{boardId}");
+        public async Task<int> AddPhase(TaskPhases taskPhase) => await CallService<int>("POST", "/taskphases", taskPhase);
+        public async Task ChangePhase(TaskPhases taskPhase) => await CallService<object>("PUT", $"/taskphases/{taskPhase.Id}", taskPhase);
+        public async Task DeletePhase(int ID) => await CallService<object>("DELETE", $"/taskphases/{ID}", null);
+        public async Task<List<TaskPriority>> GetTaskPriority() => await CallService<List<TaskPriority>>("GET", "/taskpriorities");
+        public async Task<int> AddPriority(TaskPriority taskPriority) => await CallService<int>("POST", "/taskpriorities", taskPriority);
+        public async Task ChangePriority(TaskPriority taskPriority) => await CallService<object>("PUT", $"/taskpriorities/{taskPriority.Id}", taskPriority);
+        public async Task DeletePriority(int ID) => await CallService<object>("DELETE", $"/taskpriorities/{ID}", null);
+        public async Task<List<TaskType>> GetTaskType() => await CallService<List<TaskType>>("GET", "/tasktypes");
+        public async Task<int> AddTaskType(TaskType taskType) => await CallService<int>("POST", "/tasktypes", taskType);
+        public async Task ChangeTaskType(TaskType taskType) => await CallService<object>("PUT", $"/tasktypes/{taskType.Id}", taskType);
+        public async Task DeleteTaskType(int ID) => await CallService<object>("DELETE", $"/tasktypes/{ID}", null);
+        public async Task<List<Users>> GetUsers() => await CallService<List<Users>>("GET", "/users");
+        public async Task<List<UsersToTransferTask>> GetUsersToTransferTask() => await CallService<List<UsersToTransferTask>>("GET", "/tasks/transfer/users");
+        public async Task<List<TaskGetCustomFields>> GetTaskCustomFields() => await CallService<List<TaskGetCustomFields>>("GET", "/tasks/customfields");
+        public async Task<List<Tasks>> GetTasks(Dictionary<string, object> filter)
         {
             var sb = new StringBuilder("?");
             foreach(var f in filter.ToList())
@@ -161,16 +161,16 @@ namespace TaskFly.Integra
             }
             var strFilter = sb.ToString();
             strFilter = strFilter.Substring(0, strFilter.Length - 1);
-            return CallService<List<Tasks>>("GET", $"/tasks" + strFilter);
+            return await CallService<List<Tasks>>("GET", $"/tasks" + strFilter);
         }
-        public List<Tasks> GetTasksByTag(string taskTag, bool taskShowClosed = false) => CallService<List<Tasks>>("POST", "/tasks/getbytag", new { tag = taskTag, showClosed = taskShowClosed });
-        public int AddTask(Tasks task) => CallService<int>("POST", "/tasks", task);
-        public List<TaskComments> GetTaskComments(int ID) => CallService<List<TaskComments>>("GET", $"/tasks/{ID}/comments");
-        public List<UsersTasks> GetUsersTaskCount() => CallService<List<UsersTasks>>("GET", "/users/opentask");
-        public void SendTaskComments(int ID, TaskComment comment) => CallService<object>("POST", $"/tasks/{ID}/comments", comment);
-        public void TaskStartTimer(int ID) => CallService<object>("PUT", $"/tasks/{ID}/start", null);
-        public void TaskStopTimer(int ID) => CallService<object>("PUT", $"/tasks/{ID}/stop", null);
-        public void TransferTask(int ID, int newUserId) => CallService<object>("PUT",$"/tasks/{ID}/transfer/{newUserId}",null);
-        public void SendTaskAttachmment(int ID, TaskAttachment attachment) => CallService<object>("POST", $"/tasks/{ID}/attachments", attachment);
+        public async Task<List<Tasks>> GetTasksByTag(string taskTag, bool taskShowClosed = false) => await CallService<List<Tasks>>("POST", "/tasks/getbytag", new { tag = taskTag, showClosed = taskShowClosed });
+        public async Task<int> AddTask(Tasks task) => await CallService<int>("POST", "/tasks", task);
+        public async Task<List<TaskComments>> GetTaskComments(int ID) => await CallService<List<TaskComments>>("GET", $"/tasks/{ID}/comments");
+        public async Task<List<UsersTasks>> GetUsersTaskCount() => await CallService<List<UsersTasks>>("GET", "/users/opentask");
+        public async Task SendTaskComments(int ID, TaskComment comment) => await CallService<object>("POST", $"/tasks/{ID}/comments", comment);
+        public async Task TaskStartTimer(int ID) => await CallService<object>("PUT", $"/tasks/{ID}/start", null);
+        public async Task TaskStopTimer(int ID) => await CallService<object>("PUT", $"/tasks/{ID}/stop", null);
+        public async Task TransferTask(int ID, int newUserId) => await CallService<object>("PUT",$"/tasks/{ID}/transfer/{newUserId}",null);
+        public async Task SendTaskAttachmment(int ID, TaskAttachment attachment) => await CallService<object>("POST", $"/tasks/{ID}/attachments", attachment);
     }
 }
