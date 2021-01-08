@@ -19,6 +19,7 @@ namespace TaskFly.Entities
         public string Customer { get; set; }
         public int? ProjectId { get; set; }
         public string Project { get; set; }
+        public string Title { get; set; }
         public string Description { get; set; }
         public int? PhaseId { get; set; }
         public string Phase { get; set; }

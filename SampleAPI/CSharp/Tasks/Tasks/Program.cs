@@ -161,6 +161,7 @@ namespace TaskFlySampleAPI
 
             var newTask = new Tasks
             {
+                Title = "Title Task",
                 Description = "Task Created",
                 EstimatedDate = DateTime.Now.AddDays(10),
                 PhaseId = phase.Id,
